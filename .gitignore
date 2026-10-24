@@ -1,1 +1,32 @@
-__pycache__/auth.cpython-314.pyc
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.pyc
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Database (do NOT commit the live DB)
+data/attendance.db
+data/*.db
+
+# Student face embeddings (private / regenerated on server)
+students/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
