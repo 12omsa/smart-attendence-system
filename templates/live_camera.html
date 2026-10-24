@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Live Camera - AI Attendance</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .info {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow:
+                0 3px 12px
+                rgba(0, 0, 0, 0.08);
+        }
+
+        .info h2 {
+            margin-top: 0;
+        }
+
+        .security-status {
+            display: grid;
+            grid-template-columns:
+                repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .status-card {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .status-card strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .active {
+            color: #16a34a;
+        }
+
+        .camera-card {
+            background: #111827;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow:
+                0 5px 20px
+                rgba(0, 0, 0, 0.15);
+        }
+
+        .camera-wrapper {
+            width: 100%;
+            max-width: 960px;
+            margin: auto;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .camera {
+            width: 100%;
+            display: block;
+            border-radius: 10px;
+            background: #000;
+            min-height: 360px;
+            object-fit: contain;
+        }
+
+        .placeholder {
+            min-height: 360px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #9ca3af;
+            font-size: 18px;
+        }
+
+        .placeholder-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .start {
+            background: #16a34a;
+            color: white;
+        }
+
+        .start:hover:not(:disabled) {
+            background: #15803d;
+        }
+
+        .stop {
+            background: #dc2626;
+            color: white;
+        }
+
+        .stop:hover:not(:disabled) {
+            background: #b91c1c;
+        }
+
+        .status {
+            margin-top: 15px;
+            color: white;
+            font-size: 15px;
+        }
+
+        .status.running {
+            color: #4ade80;
+        }
+
+        .status.stopped {
+            color: #f87171;
+        }
+
+        .instructions {
+            margin-top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow:
+                0 3px 12px
+                rgba(0, 0, 0, 0.08);
+        }
+
+        .instructions h3 {
+            margin-top: 0;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+        }
+
+        .security-note {
+            margin-top: 15px;
+            padding: 14px;
+            border-radius: 8px;
+            background: #ecfdf5;
+            border-left: 5px solid #16a34a;
+        }
+
+        @media (max-width: 700px) {
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .header a {
+                margin: 0 7px;
+            }
+
+            .security-status {
+                grid-template-columns: 1fr;
+            }
+
+            .camera {
+                min-height: 250px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <h1>
+        🤖 AI Attendance
+    </h1>
+
+    <div>
+
+        <a href="/">
+            Dashboard
+        </a>
+
+        <a href="/students">
+            Students
+        </a>
+
+        <a href="/attendance">
+            Attendance
+        </a>
+
+    </div>
+
+</header>
+
+
+<div class="container">
+
+
+    <!-- =====================================================
+         INFORMATION
+         ===================================================== -->
+
+    <div class="info">
+
+        <h2>
+            Live AI Camera
+        </h2>
+
+        <p>
+            The webcam uses AI face detection,
+            passive anti-spoofing and face recognition
+            to verify registered students.
+        </p>
+
+
+        <div class="security-status">
+
+
+            <div class="status-card">
+
+                <strong>
+                    📷 Webcam
+                </strong>
+
+                <span class="active">
+                    Ready
+                </span>
+
+            </div>
+
+
+            <div class="status-card">
+
+                <strong>
+                    🛡 Anti-Spoofing
+                </strong>
+
+                <span class="active">
+                    Active
+                </span>
+
+            </div>
+
+
+            <div class="status-card">
+
+                <strong>
+                    👤 Face Recognition
+                </strong>
+
+                <span class="active">
+                    Active
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="security-note">
+
+            <strong>
+                Security:
+            </strong>
+
+            Attendance is marked only after
+            the system confirms a live face
+            and verifies the registered identity.
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         CAMERA
+         ===================================================== -->
+
+    <div class="camera-card">
+
+
+        <div class="camera-wrapper">
+
+
+            <div
+                id="placeholder"
+                class="placeholder"
+            >
+
+                <div class="placeholder-icon">
+                    📷
+                </div>
+
+                <div>
+                    Camera is currently stopped
+                </div>
+
+            </div>
+
+
+            <img
+                id="camera"
+                class="camera"
+                alt="AI Attendance Webcam"
+                style="display: none;"
+            >
+
+
+        </div>
+
+
+        <!-- =================================================
+             CONTROLS
+             ================================================= -->
+
+        <div class="controls">
+
+
+            <button
+                id="startButton"
+                class="start"
+                onclick="startCamera()"
+            >
+                ▶ Start Camera
+            </button>
+
+
+            <button
+                id="stopButton"
+                class="stop"
+                onclick="stopCamera()"
+                disabled
+            >
+                ■ Stop Camera
+            </button>
+
+
+        </div>
+
+
+        <div
+            id="status"
+            class="status stopped"
+        >
+            Camera stopped
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         INSTRUCTIONS
+         ===================================================== -->
+
+    <div class="instructions">
+
+
+        <h3>
+            How it works
+        </h3>
+
+
+        <ol>
+
+            <li>
+                Click <strong>Start Camera</strong>.
+            </li>
+
+            <li>
+                The system opens the connected webcam.
+            </li>
+
+            <li>
+                AI detects the face.
+            </li>
+
+            <li>
+                Passive anti-spoofing checks whether
+                the detected face is a real person.
+            </li>
+
+            <li>
+                If the face is live, InsightFace
+                compares it with registered students.
+            </li>
+
+            <li>
+                The identity must be confirmed across
+                multiple frames.
+            </li>
+
+            <li>
+                Only a verified live registered student
+                can receive attendance.
+            </li>
+
+        </ol>
+
+
+        <h3>
+            Security Results
+        </h3>
+
+
+        <ul>
+
+            <li>
+                🟢 Real registered student →
+                Attendance can be marked.
+            </li>
+
+            <li>
+                🔴 Photo →
+                Access denied.
+            </li>
+
+            <li>
+                🔴 Recorded face video →
+                Access denied.
+            </li>
+
+            <li>
+                🟠 Unknown live person →
+                No attendance.
+            </li>
+
+        </ul>
+
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+    const camera =
+        document.getElementById("camera");
+
+    const placeholder =
+        document.getElementById("placeholder");
+
+    const status =
+        document.getElementById("status");
+
+    const startButton =
+        document.getElementById("startButton");
+
+    const stopButton =
+        document.getElementById("stopButton");
+
+
+    let cameraRunning = false;
+
+
+    // ========================================================
+    // START CAMERA
+    // ========================================================
+
+    function startCamera() {
+
+        if (cameraRunning) {
+            return;
+        }
+
+
+        cameraRunning = true;
+
+
+        placeholder.style.display =
+            "none";
+
+
+        camera.style.display =
+            "block";
+
+
+        /*
+         * This connects directly to Flask's
+         * /video-feed route.
+         *
+         * The webcam itself is opened by
+         * recognition.py on the server.
+         */
+
+        camera.src =
+            "/video-feed";
+
+
+        status.textContent =
+            "Camera running — AI recognition and anti-spoofing active";
+
+
+        status.className =
+            "status running";
+
+
+        startButton.disabled =
+            true;
+
+
+        stopButton.disabled =
+            false;
+
+    }
+
+
+    // ========================================================
+    // STOP CAMERA
+    // ========================================================
+
+    function stopCamera() {
+
+        if (!cameraRunning) {
+            return;
+        }
+
+
+        cameraRunning = false;
+
+
+        /*
+         * Removing the image source closes the
+         * browser's MJPEG connection.
+         */
+
+        camera.src =
+            "";
+
+
+        camera.style.display =
+            "none";
+
+
+        placeholder.style.display =
+            "flex";
+
+
+        status.textContent =
+            "Camera stopped";
+
+
+        status.className =
+            "status stopped";
+
+
+        startButton.disabled =
+            false;
+
+
+        stopButton.disabled =
+            true;
+
+    }
+
+
+    // ========================================================
+    // PAGE CLOSE
+    // ========================================================
+
+    window.addEventListener(
+        "beforeunload",
+        function () {
+
+            camera.src = "";
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>

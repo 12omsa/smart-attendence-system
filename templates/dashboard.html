@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Dashboard - AI Attend
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            🤖 AI <span>Attend</span>
+        </div>
+
+
+        <div class="nav-title">
+            Main
+        </div>
+
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="active"
+        >
+            🏠 Dashboard
+        </a>
+
+
+        <a href="{{ url_for('students') }}">
+            👥 Students
+        </a>
+
+
+        <a href="{{ url_for('attendance') }}">
+            📋 Attendance
+        </a>
+
+
+        <a href="{{ url_for('live_camera') }}">
+            📷 Live Camera
+        </a>
+
+
+        <a href="{{ url_for('reports') }}">
+            📊 Reports
+        </a>
+
+
+        <div class="nav-title">
+            Management
+        </div>
+
+
+        <a href="{{ url_for('add_student') }}">
+            ➕ Add Student
+        </a>
+
+
+        <a href="{{ url_for('register_face_page') }}">
+            🧑 Face Registration
+        </a>
+
+
+        <a href="{{ url_for('logout') }}">
+            🚪 Logout
+        </a>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+
+        <div class="topbar">
+
+            <div>
+
+                <div class="page-title">
+                    Dashboard
+                </div>
+
+                <div class="page-subtitle">
+                    AI-powered attendance management
+                </div>
+
+            </div>
+
+
+            <a
+                href="{{ url_for('logout') }}"
+                class="logout"
+            >
+                Logout
+            </a>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="stats">
+
+
+            <div class="card">
+
+                <div class="stat-label">
+                    Total Students
+                </div>
+
+                <div class="stat-value">
+                    {{ total_students }}
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="stat-label">
+                    Present Today
+                </div>
+
+                <div class="stat-value">
+                    {{ present_today }}
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="stat-label">
+                    Attendance Rate
+                </div>
+
+                <div class="stat-value">
+
+                    {% if total_students > 0 %}
+
+                        {{
+                            (
+                                present_today
+                                /
+                                total_students
+                            * 100
+                            ) | round(1)
+                        }}%
+
+                    {% else %}
+
+                        0%
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- CHARTS -->
+
+        <div class="chart-grid">
+
+
+            <div class="chart-card">
+
+                <h3>
+                    Attendance — Last 7 Days
+                </h3>
+
+                <canvas
+                    id="attendanceChart"
+                ></canvas>
+
+            </div>
+
+
+            <div class="chart-card">
+
+                <h3>
+                    Student Attendance Ranking
+                </h3>
+
+                <canvas
+                    id="studentChart"
+                ></canvas>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- TODAY ATTENDANCE -->
+
+        <div class="table-card">
+
+
+            <div class="table-header">
+
+                Today's Attendance
+
+            </div>
+
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Student ID
+                        </th>
+
+                        <th>
+                            Name
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Time
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for record in attendance_records %}
+
+                    <tr>
+
+                        <td>
+                            {{ record.student_id }}
+                        </td>
+
+                        <td>
+                            {{ record.name }}
+                        </td>
+
+                        <td>
+                            {{ record.date }}
+                        </td>
+
+                        <td>
+                            {{ record.time }}
+                        </td>
+
+                        <td>
+
+                            <span
+                                class="status-present"
+                            >
+                                {{ record.status }}
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="5"
+                            style="text-align:center;"
+                        >
+
+                            No attendance records
+                            found for today.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+
+        </div>
+
+
+    </main>
+
+
+    <script>
+
+        const chartDates =
+            {{ chart_dates | tojson }};
+
+        const chartPresent =
+            {{ chart_present | tojson }};
+
+        const studentNames =
+            {{ student_names | tojson }};
+
+        const studentAttendance =
+            {{ student_attendance | tojson }};
+
+
+        new Chart(
+
+            document.getElementById(
+                "attendanceChart"
+            ),
+
+            {
+
+                type: "line",
+
+                data: {
+
+                    labels: chartDates,
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Present",
+
+                            data:
+                                chartPresent,
+
+                            tension:
+                                0.3,
+
+                            fill:
+                                false
+
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    plugins: {
+
+                        legend: {
+                            display: true
+                        }
+
+                    },
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            ticks: {
+
+                                precision: 0
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+
+        new Chart(
+
+            document.getElementById(
+                "studentChart"
+            ),
+
+            {
+
+                type: "bar",
+
+                data: {
+
+                    labels:
+                        studentNames,
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Present Days",
+
+                            data:
+                                studentAttendance
+
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    indexAxis: "y",
+
+                    responsive: true,
+
+                    scales: {
+
+                        x: {
+
+                            beginAtZero: true,
+
+                            ticks: {
+
+                                precision: 0
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+    </script>
+
+
+</body>
+
+</html>

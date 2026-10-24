@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Students - AI Attendance</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            margin-left: 18px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .actions {
+            margin-bottom: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 11px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        .primary {
+            background: #111827;
+            color: white;
+        }
+
+        .secondary {
+            background: white;
+            color: #111827;
+            border: 1px solid #ddd;
+        }
+
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            box-shadow:
+                0 3px 12px
+                rgba(0,0,0,0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f1f3f5;
+        }
+
+        .profile {
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <h1>
+        👨‍🎓 Students
+    </h1>
+
+    <div>
+
+        <a href="/">
+            Dashboard
+        </a>
+
+        <a href="/attendance">
+            Attendance
+        </a>
+
+        <a href="/reports">
+            Reports
+        </a>
+
+    </div>
+
+</header>
+
+
+<div class="container">
+
+
+    <div class="actions">
+
+        <a
+            class="button primary"
+            href="/add-student"
+        >
+            + Add Student
+        </a>
+
+        <a
+            class="button secondary"
+            href="/register-face"
+        >
+            📷 Register Face
+        </a>
+
+    </div>
+
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Student ID
+                    </th>
+
+                    <th>
+                        Name
+                    </th>
+
+                    <th>
+                        Registered
+                    </th>
+
+                    <th>
+                        Profile
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for student in students %}
+
+                <tr>
+
+                    <td>
+                        {{ student.student_id }}
+                    </td>
+
+                    <td>
+                        {{ student.name }}
+                    </td>
+
+                    <td>
+                        {{ student.created_at }}
+                    </td>
+
+                    <td>
+
+                        <a
+                            class="profile"
+                            href="/student/{{ student.student_id }}"
+                        >
+                            View Profile →
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td
+                        colspan="4"
+                        class="empty"
+                    >
+                        No students registered.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

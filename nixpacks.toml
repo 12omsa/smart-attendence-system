@@ -1,0 +1,19 @@
+[phases.setup]
+nixPkgs = [
+  "python312",
+  "libGL",
+  "libGLU",
+  "glib",
+  "libstdcxx5",
+  "zlib",
+  "gcc"
+]
+
+[phases.install]
+cmds = [
+  "pip install --upgrade pip",
+  "pip install -r requirements.txt"
+]
+
+[start]
+cmd = "gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120"

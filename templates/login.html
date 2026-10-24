@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Admin Login - AI Attend
+    </title>
+
+
+    <style>
+
+        * {
+
+            box-sizing: border-box;
+
+            margin: 0;
+
+            padding: 0;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #111827,
+                    #2563eb
+                );
+
+        }
+
+
+        .login-card {
+
+            width: 390px;
+
+            max-width: 90%;
+
+            background: white;
+
+            padding: 35px;
+
+            border-radius: 16px;
+
+            box-shadow:
+                0 15px 40px
+                rgba(0, 0, 0, 0.25);
+
+        }
+
+
+        .logo {
+
+            text-align: center;
+
+            font-size: 30px;
+
+            font-weight: bold;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .logo span {
+
+            color: #2563eb;
+
+        }
+
+
+        .subtitle {
+
+            text-align: center;
+
+            color: #6b7280;
+
+            margin-bottom: 30px;
+
+        }
+
+
+        label {
+
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-weight: bold;
+
+            font-size: 14px;
+
+        }
+
+
+        input {
+
+            width: 100%;
+
+            padding: 13px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 8px;
+
+            margin-bottom: 18px;
+
+            font-size: 15px;
+
+            outline: none;
+
+        }
+
+
+        input:focus {
+
+            border-color: #2563eb;
+
+        }
+
+
+        button {
+
+            width: 100%;
+
+            padding: 13px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #2563eb;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+
+        button:hover {
+
+            background: #1d4ed8;
+
+        }
+
+
+        .error {
+
+            background: #fee2e2;
+
+            color: #991b1b;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            margin-bottom: 20px;
+
+            font-size: 14px;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="login-card">
+
+
+        <div class="logo">
+
+            🤖 AI <span>Attend</span>
+
+        </div>
+
+
+        <p class="subtitle">
+
+            Administrator Login
+
+        </p>
+
+
+        {% if error %}
+
+        <div class="error">
+
+            {{ error }}
+
+        </div>
+
+        {% endif %}
+
+
+        <form
+            method="POST"
+            autocomplete="off"
+        >
+
+
+            <label for="username">
+
+                Username
+
+            </label>
+
+
+            <input
+
+                type="text"
+
+                id="username"
+
+                name="username"
+
+                required
+
+                autocomplete="username"
+
+            >
+
+
+            <label for="password">
+
+                Password
+
+            </label>
+
+
+            <input
+
+                type="password"
+
+                id="password"
+
+                name="password"
+
+                required
+
+                autocomplete="current-password"
+
+            >
+
+
+            <button type="submit">
+
+                Login
+
+            </button>
+
+
+        </form>
+
+
+    </div>
+
+
+</body>
+
+</html>
